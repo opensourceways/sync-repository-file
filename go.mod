@@ -8,6 +8,7 @@ require (
 	github.com/opensourceways/robot-gitee-lib v0.0.0-20230323030221-ef1078bbd55c
 	github.com/opensourceways/server-common-lib v0.0.0-20230208064916-61fc43dfb8db
 	github.com/sirupsen/logrus v1.9.0
+	k8s.io/apimachinery v0.26.1
 )
 
 require (
@@ -40,6 +41,5 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	k8s.io/apimachinery v0.26.1 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
