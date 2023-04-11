@@ -16,6 +16,7 @@ type Branch struct {
 }
 
 type RepoFileInfo struct {
+	Name string
 	Path string
 	SHA  string
 }

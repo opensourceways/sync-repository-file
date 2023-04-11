@@ -18,29 +18,32 @@ func NewRepoFileService(
 	message message.RepoFile,
 ) repoFileService {
 	return repoFileService{
-		repo:    repo,
-		message: message,
+		repo:           repo,
+		message:        message,
+		repoFileFilter: repoFileFilter{repo},
 	}
 }
 
 type repoFileService struct {
-	repo    repository.RepoFile
-	message message.RepoFile
+	repo           repository.RepoFile
+	message        message.RepoFile
+	repoFileFilter repoFileFilter
 }
 
 func (s repoFileService) FetchRepoBranch(
 	p codeplatform.CodePlatform,
 	cmd *CmdToFetchRepoBranch,
 ) error {
-	v, err := p.ListBranches(*cmd)
+	v, err := p.ListBranches(cmd.OrgRepo)
 	if err != nil {
 		return err
 	}
 
 	task := domain.RepoBranchFetchedEvent{
-		Platform: p.Platform(),
-		Org:      cmd.Org,
-		Repo:     cmd.Repo,
+		Platform:  p.Platform(),
+		Org:       cmd.Org,
+		Repo:      cmd.Repo,
+		FileNames: cmd.FileNames,
 	}
 
 	for i := range v {
@@ -63,6 +66,20 @@ func (s repoFileService) FetchRepoFile(
 		return err
 	}
 
+	files := s.repoFileFilter.do(
+		domain.PlatformOrgRepo{
+			Platform: p.Platform(),
+			OrgRepo: domain.OrgRepo{
+				Org:  cmd.Org,
+				Repo: cmd.Repo,
+			},
+		},
+		cmd.Branch, cmd.FileNames, v,
+	)
+	if len(files) == 0 {
+		return nil
+	}
+
 	task := domain.RepoFileFetchedEvent{
 		Platform: p.Platform(),
 		Org:      cmd.Org,
@@ -70,8 +87,8 @@ func (s repoFileService) FetchRepoFile(
 		Branch:   cmd.Branch,
 	}
 
-	for i := range v {
-		task.FilePath = v[i].Path
+	for _, path := range files {
+		task.FilePath = path
 
 		if err := s.message.SendRepoFileFetchedEvent(&task); err != nil {
 			return err

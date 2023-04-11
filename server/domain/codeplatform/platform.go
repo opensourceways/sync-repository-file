@@ -5,8 +5,6 @@ import "github.com/opensourceways/sync-repository-file/server/domain"
 type CodePlatform interface {
 	Platform() string
 
-	ListRepos(org string) ([]string, error)
-
 	ListBranches(domain.OrgRepo) ([]domain.Branch, error)
 
 	ListFiles(repo domain.OrgRepo, branch string) ([]domain.RepoFileInfo, error)

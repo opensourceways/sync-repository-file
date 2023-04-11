@@ -7,15 +7,19 @@ import (
 
 // msgOfRepoFetched
 type msgOfRepoFetched struct {
-	Platform string `json:"platform"`
-	Org      string `json:"org"`
-	Repo     string `json:"repo"`
+	Platform  string   `json:"platform"`
+	Org       string   `json:"org"`
+	Repo      string   `json:"repo"`
+	FileNames []string `json:"file_names"`
 }
 
 func (msg *msgOfRepoFetched) toCmd() app.CmdToFetchRepoBranch {
 	return app.CmdToFetchRepoBranch{
-		Org:  msg.Org,
-		Repo: msg.Repo,
+		OrgRepo: domain.OrgRepo{
+			Org:  msg.Org,
+			Repo: msg.Repo,
+		},
+		FileNames: msg.FileNames,
 	}
 }
 
@@ -31,6 +35,7 @@ func cmdToFetchRepoFile(data []byte) (
 	cmd.Org = v.Org
 	cmd.Repo = v.Repo
 	cmd.Branch = v.Branch
+	cmd.FileNames = v.FileNames
 
 	platform = v.Platform
 

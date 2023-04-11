@@ -4,10 +4,11 @@ import "encoding/json"
 
 // RepoBranchFetchedEvent
 type RepoBranchFetchedEvent struct {
-	Platform string `json:"platform"`
-	Org      string `json:"org"`
-	Repo     string `json:"repo"`
-	Branch   string `json:"branch"`
+	Platform  string   `json:"platform"`
+	Org       string   `json:"org"`
+	Repo      string   `json:"repo"`
+	Branch    string   `json:"branch"`
+	FileNames []string `json:"file_names"`
 }
 
 func (t *RepoBranchFetchedEvent) Message() ([]byte, error) {

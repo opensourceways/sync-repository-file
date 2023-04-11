@@ -1,6 +1,8 @@
 package gitee
 
 import (
+	"path"
+
 	"github.com/opensourceways/robot-gitee-lib/client"
 
 	"github.com/opensourceways/sync-repository-file/server/domain"
@@ -22,21 +24,6 @@ type giteePlatform struct {
 
 func (gp *giteePlatform) Platform() string {
 	return "gitee"
-}
-
-func (gp *giteePlatform) ListRepos(org string) ([]string, error) {
-	repos, err := gp.cli.GetRepos(org)
-	if err != nil || len(repos) == 0 {
-		return nil, err
-	}
-
-	repoNames := make([]string, len(repos))
-
-	for i := range repos {
-		repoNames[i] = repos[i].Path
-	}
-
-	return repoNames, nil
 }
 
 func (gp *giteePlatform) ListBranches(repo domain.OrgRepo) ([]domain.Branch, error) {
@@ -70,6 +57,7 @@ func (gp *giteePlatform) ListFiles(repo domain.OrgRepo, branch string) (
 	for i := range trees.Tree {
 		item := &trees.Tree[i]
 
+		files[i].Name = path.Base(item.Path)
 		files[i].Path = item.Path
 		files[i].SHA = item.Sha
 	}
@@ -77,12 +65,13 @@ func (gp *giteePlatform) ListFiles(repo domain.OrgRepo, branch string) (
 	return files, nil
 }
 
-func (gp *giteePlatform) GetFile(repo domain.OrgRepo, branch, path string) (
+func (gp *giteePlatform) GetFile(repo domain.OrgRepo, branch, filepath string) (
 	r domain.RepoFile, err error,
 ) {
-	content, err := gp.cli.GetPathContent(repo.Org, repo.Repo, path, branch)
+	content, err := gp.cli.GetPathContent(repo.Org, repo.Repo, filepath, branch)
 	if err == nil {
-		r.Path = path
+		r.Name = path.Base(filepath)
+		r.Path = filepath
 		r.SHA = content.Sha
 		r.Content = content.Content
 	}

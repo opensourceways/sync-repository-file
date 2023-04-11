@@ -43,7 +43,7 @@ func gatherOptions(fs *flag.FlagSet, args ...string) options {
 }
 
 func main() {
-	logrusutil.ComponentInit("sync-repository-file/server")
+	logrusutil.ComponentInit("sync-repository-file-server")
 	log := logrus.NewEntry(logrus.StandardLogger())
 
 	o := gatherOptions(
