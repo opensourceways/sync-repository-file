@@ -38,7 +38,9 @@ func (impl *triggerImpl) start(cfg *repoConfig) {
 		cmd.ExcludedRepos = item.ExcludedRepos
 
 		if err := impl.service.FetchRepo(p, &cmd); err != nil {
-			logrus.Errorf("fetch repo failed for org: %s", item.Org)
+			logrus.Errorf(
+				"fetch repo failed for org: %s, err: %s", item.Org, err.Error(),
+			)
 		}
 	}
 
